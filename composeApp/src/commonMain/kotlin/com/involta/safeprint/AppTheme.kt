@@ -22,7 +22,7 @@ private val DarkColors = darkColors(
     primaryVariant = Orange,
     onPrimary = Color.White,
     secondary = Purple,
-    onSecondary = Color.White
+    onSecondary = Color.White,
 )
 
 @Composable

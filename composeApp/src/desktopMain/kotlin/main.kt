@@ -4,10 +4,13 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.involta.safeprint.App
 
+
 fun main() = application {
     Window(
-        title = "SafePrint",
+        title = "Единоразовая печать",
         state = rememberWindowState(width = 600.dp, height = 400.dp),
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            exitApplication()
+        },
     ) { App() }
 }
