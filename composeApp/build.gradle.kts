@@ -17,10 +17,17 @@ kotlin {
                 implementation(compose.material)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                 implementation("io.ktor:ktor-client-core:2.2.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                //implementation("com.itextpdf:itextpdf:5.5.13.2")
-                implementation("org.apache.pdfbox:pdfbox:2.0.24")
+                implementation("io.ktor:ktor-client-content-negotiation:2.2.4")
+                implementation("io.ktor:ktor-client-json:2.2.4")
+                implementation("io.ktor:ktor-client-serialization:2.2.4")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.4")
+                implementation("io.ktor:ktor-client-cio:2.2.4")
+                implementation("io.ktor:ktor-client-logging:2.2.4")
                 implementation(kotlin("reflect"))
+                implementation("org.apache.pdfbox:pdfbox:2.0.24")
+
             }
         }
 

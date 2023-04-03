@@ -8,11 +8,13 @@ import com.involta.safeprint.screen.MainScreen
 
 
 @Composable
-internal fun App() = AppTheme {
+internal fun App(exitApplication: () -> Unit) = AppTheme {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        MainScreen()
+        MainScreen(){
+            exitApplication()
+        }
     }
 }
 

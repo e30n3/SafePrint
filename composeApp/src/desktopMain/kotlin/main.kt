@@ -12,5 +12,9 @@ fun main() = application {
         onCloseRequest = {
             exitApplication()
         },
-    ) { App() }
+    ) {
+        App {
+            exitApplication()
+        }
+    }
 }
