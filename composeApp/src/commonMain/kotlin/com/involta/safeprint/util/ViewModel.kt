@@ -1,4 +1,4 @@
-package com.involta.safeprint.extention
+package com.involta.safeprint.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

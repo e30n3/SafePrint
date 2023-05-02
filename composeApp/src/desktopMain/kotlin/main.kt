@@ -8,13 +8,11 @@ import com.involta.safeprint.App
 fun main() = application {
     Window(
         title = "Единоразовая печать",
-        state = rememberWindowState(width = 600.dp, height = 400.dp),
+        state = rememberWindowState(width = 390.dp, height = 400.dp),
         onCloseRequest = {
             exitApplication()
         },
     ) {
-        App {
-            exitApplication()
-        }
+        App()
     }
 }

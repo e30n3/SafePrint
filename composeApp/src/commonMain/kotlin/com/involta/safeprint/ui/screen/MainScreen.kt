@@ -1,4 +1,4 @@
-package com.involta.safeprint.screen
+package com.involta.safeprint.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.VerticalScrollbar
@@ -8,25 +8,18 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.involta.safeprint.extention.MarqueeText
-import com.involta.safeprint.extention.rememberViewModel
+import com.involta.safeprint.util.rememberViewModel
 
 @Composable
-fun MainScreen(exitApplication: () -> Unit) {
+fun MainScreen() {
     val viewModel = rememberViewModel<MainViewModel>()
     val clipboardManager = LocalClipboardManager.current
     val scrollState = rememberScrollState()
-    LaunchedEffect(Unit) {
-        viewModel.onComposed(clipboardManager.getText().toString()) {
-            exitApplication()
-        }
-    }
     Box(Modifier.fillMaxSize()) {
         AnimatedVisibility(viewModel.isLoading, Modifier.align(Alignment.TopCenter)) {
             LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -40,13 +33,14 @@ fun MainScreen(exitApplication: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MarqueeText(
-                "Будьте внимательны, после ввода кода, данный файл уже будет невозможно распечатать повторно!",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption,
-                gradientEdgeColor = MaterialTheme.colors.background
-            )
+            Card(backgroundColor = MaterialTheme.colors.secondary) {
+                Text(
+                    "Будьте внимательны, после ввода кода, данный файл уже будет невозможно распечатать повторно!",
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    textAlign = TextAlign.Justify,
+                    style = MaterialTheme.typography.caption,
+                )
+            }
             TextField(viewModel.token, {
                 viewModel.onTokenChanged(it)
             }, enabled = viewModel.isTokenFieldEnabled, modifier = Modifier.fillMaxWidth(), label = {
@@ -57,12 +51,12 @@ fun MainScreen(exitApplication: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 enabled = viewModel.isPasteButtonEnabled
             ) {
-                Text("Вставить из буфера обмена")
+                Text("Вставить из буфера обмена и печатать")
             }
             AnimatedVisibility(viewModel.isErrorVisible) {
-                Card(backgroundColor = MaterialTheme.colors.error) {
+                Card(backgroundColor = MaterialTheme.colors.error, modifier = Modifier.fillMaxWidth()) {
                     Column(
-                        Modifier.padding(16.dp),
+                        Modifier.fillMaxWidth().padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {

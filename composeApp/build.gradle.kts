@@ -54,7 +54,10 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "com.involta.safeprint.desktopApp"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.10"
+            windows {
+                shortcut = true
+            }
         }
     }
 }

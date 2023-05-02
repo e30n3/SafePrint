@@ -1,4 +1,4 @@
-package com.involta.safeprint
+package com.involta.safeprint.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

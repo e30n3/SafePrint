@@ -15,7 +15,7 @@ pluginManagement {
         kotlin("native.cocoapods").version(kotlin)
 
         id("com.android.application").version("7.4.2")
-        id("org.jetbrains.compose").version("1.4.0-alpha01-dev980")
+        id("org.jetbrains.compose").version("1.4.0")
         kotlin("plugin.serialization").version(kotlin)
 
     }

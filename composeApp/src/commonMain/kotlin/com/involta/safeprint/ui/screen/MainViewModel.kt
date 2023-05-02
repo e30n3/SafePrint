@@ -1,12 +1,12 @@
-package com.involta.safeprint.screen
+package com.involta.safeprint.ui.screen
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.involta.safeprint.extention.ViewModel
 import com.involta.safeprint.model.PdfRequest
 import com.involta.safeprint.model.PdfResponse
+import com.involta.safeprint.util.ViewModel
 import com.involta.safeprint.versionDate
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -22,6 +22,9 @@ import kotlinx.serialization.json.Json
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.printing.PDFPageable
 import java.awt.print.PrinterJob
+import java.io.ByteArrayOutputStream
+import javax.print.attribute.HashPrintRequestAttributeSet
+import javax.print.attribute.standard.*
 
 class MainViewModel(private val viewModelScope: CoroutineScope) : ViewModel(viewModelScope) {
 
@@ -36,11 +39,6 @@ class MainViewModel(private val viewModelScope: CoroutineScope) : ViewModel(view
 
     var token by mutableStateOf("")
         private set
-
-    fun onTokenChanged(new: String) {
-        token = new
-        if (new.length == 128) downloadPdfAndPrint(token)
-    }
 
     private val client = HttpClient {
         install(Logging) {
@@ -62,14 +60,14 @@ class MainViewModel(private val viewModelScope: CoroutineScope) : ViewModel(view
             })
         }
     }
-    private var exitApplication: () -> Unit = {}
-    fun onComposed(clipBoardText: String, exitApplication: () -> Unit) {
-        autoCheck(clipBoardText)
-        this.exitApplication = exitApplication
+
+    fun onTokenChanged(new: String) {
+        token = new
+        if (new.length == 128) downloadPdfAndPrint(token)
     }
 
-    private fun autoCheck(clipBoardText: String) {
-        if (clipBoardText.length == 128) onTokenChanged(clipBoardText)
+    fun clearError() {
+        error = null
     }
 
     private fun downloadPdfAndPrint(token: String) = viewModelScope.launch(Dispatchers.Default) {
@@ -84,12 +82,10 @@ class MainViewModel(private val viewModelScope: CoroutineScope) : ViewModel(view
             if (!body.isSuccess) throw Throwable(body.message)
             startPrintProcess(body.pdfBytes)
         }.onSuccess {
-            println("SUCCESS")
             isLoading = false
             clearToken()
         }.onFailure {
             it.printStackTrace()
-            print("FAIL1")
             error = it
             isLoading = false
         }
@@ -99,30 +95,40 @@ class MainViewModel(private val viewModelScope: CoroutineScope) : ViewModel(view
         error = null
         runPrintIntent(file) {
             it.printStackTrace()
-            print("FAIL2")
             error = it
         }
     }
 
     private fun runPrintIntent(file: ByteArray, onFailure: (e: Throwable) -> Unit = {}) {
         val document = PDDocument.load(file)
+        document.pages.forEach { it.rotation = 0 }
+        val outputStream = ByteArrayOutputStream()
+        document.save(outputStream)
+        val rotatedByteArray = outputStream.toByteArray()
+        val rotatedDocument = PDDocument.load(rotatedByteArray)
+
         val job = PrinterJob.getPrinterJob()
-        job.setPageable(PDFPageable(document))
+        job.setPageable(PDFPageable(rotatedDocument))
+        val printOptions = HashPrintRequestAttributeSet().apply {
+            add(OrientationRequested.LANDSCAPE)
+            add(Sides.DUPLEX)
+            add(Copies(1))
+            add(MediaSizeName.ISO_A4)
+            add(DialogTypeSelection.NATIVE)
+        }
         if (job.printDialog()) runCatching {
-            job.print()
-            exitApplication()
+            job.print(printOptions)
         }.onFailure { e ->
             onFailure(e)
             clearToken()
         }
+        document.close()
+        rotatedDocument.close()
     }
 
     private fun clearToken() {
         token = ""
     }
 
-    fun clearError() {
-        error = null
-    }
 
 }
